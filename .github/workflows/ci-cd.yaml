@@ -47,7 +47,7 @@ jobs:
 
       - name: Build Services
         run: |
-          cd backend/${{ matrix.service }}
+          cd backend/${{ matrix.folder }}
           npm install
 
       - name: Build Docker image for service
