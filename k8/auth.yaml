@@ -1,0 +1,50 @@
+#Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  labels:
+    app: auth
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: appropriate/curl:latest
+          command: ["sh", "-c", "until curl -f http://rabbitmq:15672; do echo waiting for RabbitMQ; sleep 5; done;"]
+      containers:
+        - name: auth
+          image: melbinmathewm/auth-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4044
+          envFrom:
+            - configMapRef:
+                name: auth-config
+            - secretRef:
+                name: auth-secret
+
+
+---
+
+
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+spec: 
+  type: ClusterIP
+  selector: 
+    app: auth
+  ports:
+    - protocol: TCP
+      port: 4044
+      targetPort: 4044

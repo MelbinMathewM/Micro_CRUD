@@ -1,0 +1,99 @@
+
+services:
+  api-gateway:
+    build:
+      context: ./api_gateway
+    container_name: api-gateway
+    ports: 
+      - "3000:3000"
+    depends_on:
+      - admin-service
+      - user-service
+      - auth-service
+    environment:
+      - PORT=3000
+    networks:
+      - app-network
+
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    ports:
+      - "5673:5672"
+      - "15700:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    restart: always
+    networks:
+      - app-network
+    
+  admin-service:
+    image: melbinmathewm/admin-service
+    container_name: admin-service
+    ports:
+      - "4043:4043"
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    restart: always
+    networks:
+      - app-network
+
+  auth-service:
+    image: melbinmathewm/auth-service
+    container_name: auth-service
+    ports:
+      - "4044:4044"
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    restart: always
+    networks:
+      - app-network
+
+  user-service:
+    image: melbinmathewm/user-service
+    container_name: user-service
+    ports:
+      - "50051:50051"
+    depends_on:
+      - rabbitmq
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+    restart: always
+    networks:
+      - app-network
+
+  notification-service:
+    image: melbinmathewm/notification-service
+    container_name: notification-service
+    depends_on:
+      - rabbitmq
+      - admin-service
+      - auth-service
+      - user-service
+    environment:
+      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - EMAIL_USER=${EMAIL_USER:-glassicsofficial@gmail.com}
+      - EMAIL_PASS=${EMAIL_PASS:-czqm lofg cuqz warp}
+    restart: always
+    networks:
+      - app-network
+
+  # frontend-service:
+  #   image: melbinmathewm/frontend
+  #   container_name: frontend
+  #   depends_on:
+  #     - api-gateway
+  #   ports:
+  #     - "5173:5173"
+  #   restart: always
+  #   networks:
+  #     - app-network
+
+networks:
+  app-network:
+    driver: bridge

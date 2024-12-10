@@ -1,0 +1,48 @@
+#Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: admin
+  labels:
+    app: admin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: admin
+  template:
+    metadata:
+      labels:
+        app: admin
+    spec:
+      initContainers:
+          - name: wait-for-rabbitmq
+            image: appropriate/curl:latest
+            command: ["sh", "-c", "until curl -f http://rabbitmq:15672; do echo waiting for RabbitMQ; sleep 5; done;"]
+      containers:
+        - name: admin
+          image: melbinmathewm/admin-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 4043
+          envFrom:
+            - configMapRef:
+                name: admin-config
+            - secretRef:
+                name: admin-secret
+
+---
+
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: admin-service
+spec: 
+  type: ClusterIP
+  selector: 
+    app: admin
+  ports:
+    - protocol: TCP
+      port: 4043
+      targetPort: 4043

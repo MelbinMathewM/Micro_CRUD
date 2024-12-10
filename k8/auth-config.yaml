@@ -1,0 +1,8 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-config
+data:
+  PORT: "4044"
+  RABBITMQ_URL: "amqp://localhost"
+  MONGO_URI: "mongodb+srv://melbinppmathewp:melbin123456@glassics.pk03iij.mongodb.net/auth_service?retryWrites=true&w=majority&appName=Cluster0"

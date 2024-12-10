@@ -1,0 +1,77 @@
+name: CI/CD Pipeline
+
+on: 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-api-gateway:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Build API Gateway
+        run: |
+          cd api_gateway
+          npm install
+
+      - name: Build Docker Image for API Gateway
+        run: |
+          docker build -t melbinmathewm/api-gateway:latest ./api_gateway
+          docker push melbinmathewm/api-gateway:latest
+
+  build-services:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [auth-service, admin-service, user-service, notification-service]
+        folder: [auth_service, admin_service, user_service, notification_service]
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with: 
+          node-version: 18
+
+      - name: Build Services
+        run: |
+          cd backend/${{ matrix.service }}
+          npm install
+
+      - name: Build Docker image for service
+        run: |
+          docker build -t melbinmathewm/${{ matrix.service }}:latest ./backend/${{ matrix.folder }}
+          docker push melbinmathewm/${{ matrix.service }}:latest
+
+  build-frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Build Frontend
+        run: |
+          cd frontend
+          npm install
+      
+      - name: Build Docker image for Frontend
+        run: |
+          docker build -t melbinmathewm/frontend:latest ./frontend
+          docker push melbinmathewm/frontend:latest

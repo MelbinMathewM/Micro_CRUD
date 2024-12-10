@@ -1,0 +1,48 @@
+#Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notification
+  labels: 
+    app: notification
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notification
+  template:
+    metadata:
+      labels:
+        app: notification
+    spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: appropriate/curl:latest
+          command: ["sh", "-c", "until curl -f http://rabbitmq:15672; do echo waiting for RabbitMQ; sleep 5; done;"]
+      containers:
+        - name: notification
+          image: melbinmathewm/notification-service:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          envFrom:
+            - configMapRef:
+                name: notification-config
+
+
+---
+
+
+#Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: notification-service
+spec: 
+  type: ClusterIP
+  selector: 
+    app: notification
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000

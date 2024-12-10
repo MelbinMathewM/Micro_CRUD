@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+service UserService {
+    rpc GetUser (GetUserRequest) returns (GetUserResponse);
+    rpc EditUser (GetEditRequest) returns (GetEditResponse);
+}
+
+message GetUserRequest {
+    string user_id = 1;
+    string token = 2;
+}
+
+message UserData {
+    string id = 1;
+    string name = 2;
+    string username = 3;
+    string email = 4;
+}
+
+message GetEditRequest {
+    string user_id = 1;
+    string token = 2;
+    UserData user = 3;
+}
+
+message GetEditResponse {
+    User user = 1;
+    string message = 2;
+}
+
+message User {
+    string _id = 1;
+    string name = 2;
+    string username = 3;
+    string email = 4;
+    string role = 5;
+}
+
+message GetUserResponse {
+    User user = 1;
+}

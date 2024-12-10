@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-config
+data:
+  PORT: "50051"
+  MONGO_URI: "mongodb+srv://melbinppmathewp:melbin123456@glassics.pk03iij.mongodb.net/auth_service?retryWrites=true&w=majority&appName=Cluster0"
