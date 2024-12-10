@@ -33,7 +33,7 @@ jobs:
 
       - name: Build Docker Image for API Gateway
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest ../api_gateway
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest ./api_gateway
           docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
 
   build-services:
@@ -64,7 +64,7 @@ jobs:
 
       - name: Build Docker image for service
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest ../backend/${{ matrix.folder }}
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest ./backend/${{ matrix.folder }}
           docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest
 
   build-frontend:
@@ -91,5 +91,5 @@ jobs:
       
       - name: Build Docker image for Frontend
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ../frontend
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ./frontend
           docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest
