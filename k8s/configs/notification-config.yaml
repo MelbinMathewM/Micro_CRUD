@@ -4,6 +4,4 @@ metadata:
   name: notification-config
 data:
   PORT: "5000"
-  USER_EMAIL: "glassicsofficial@gmail.com"
-  USER_PASS: "czqm lofg cuqz warp"
   RABBITMQ_URL: "amqp://rabbitmq"

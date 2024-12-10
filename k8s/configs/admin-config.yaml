@@ -4,5 +4,4 @@ metadata:
   name: admin-config
 data:
   PORT: "4043"
-  MONGO_URI: "mongodb+srv://melbinppmathewp:melbin123456@glassics.pk03iij.mongodb.net/admin_service?retryWrites=true&w=majority&appName=Cluster0"
   RABBITMQ_URL: "amqp://rabbitmq"
