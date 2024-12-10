@@ -5,8 +5,8 @@ metadata:
 data:
   PORT: "3000"
   API_GATEWAY_URL: "http://api-gateway:3000"
-  USER_SERVICE_GRPC_URL: "localhost:50051"
-  ADMIN_SERVICE_HTTP_URL: "http://localhost:4043"
-  AUTH_SERVICE_HTTP_URL: "http://localhost:4044"
+  USER_SERVICE_GRPC_URL: "user-service:50051"
+  ADMIN_SERVICE_HTTP_URL: "http://admin-service:4043"
+  AUTH_SERVICE_HTTP_URL: "http://auth-service:4044"
   ALLOWED_ORIGINS: "http://localhost:5173"
 

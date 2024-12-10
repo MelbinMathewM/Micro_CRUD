@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: user-config
+data:
+  PORT: "50051"
+  GRPC_URL: "user-service"
+  MONGO_URI: "mongodb+srv://melbinppmathewp:melbin123456@glassics.pk03iij.mongodb.net/user_service?retryWrites=true&w=majority&appName=Cluster0"
+  RABBITMQ_URL: "amqp://rabbitmq"
