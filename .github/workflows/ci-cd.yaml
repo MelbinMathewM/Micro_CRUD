@@ -25,10 +25,16 @@ jobs:
           cd api_gateway
           npm install
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Build Docker Image for API Gateway
         run: |
-          docker build -t melbinmathewm/api-gateway:latest ./api_gateway
-          docker push melbinmathewm/api-gateway:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest ../api_gateway
+          docker push ${{ secrets.DOCKER_USERNAME }}/api-gateway:latest
 
   build-services:
     runs-on: ubuntu-latest
@@ -50,10 +56,16 @@ jobs:
           cd backend/${{ matrix.folder }}
           npm install
 
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
       - name: Build Docker image for service
         run: |
-          docker build -t melbinmathewm/${{ matrix.service }}:latest ./backend/${{ matrix.folder }}
-          docker push melbinmathewm/${{ matrix.service }}:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest ../backend/${{ matrix.folder }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service }}:latest
 
   build-frontend:
     runs-on: ubuntu-latest
@@ -70,8 +82,14 @@ jobs:
         run: |
           cd frontend
           npm install
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       
       - name: Build Docker image for Frontend
         run: |
-          docker build -t melbinmathewm/frontend:latest ./frontend
-          docker push melbinmathewm/frontend:latest
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/frontend:latest ../frontend
+          docker push ${{ secrets.DOCKER_USERNAME }}/frontend:latest

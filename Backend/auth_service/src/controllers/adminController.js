@@ -24,7 +24,7 @@ export const refreshToken = async (req,res) => {
 export const loginAdmin = async (req, res) => {
     try{
 
-        const { email, password } = req.body;
+        const { email, password } = req.body; 
 
         const admin = await Admin.findOne({email});
         if (!admin) return res.status(401).json({ message : 'Admin not found' });
