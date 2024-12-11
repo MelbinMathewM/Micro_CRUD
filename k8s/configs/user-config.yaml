@@ -4,5 +4,5 @@ metadata:
   name: user-config
 data:
   PORT: "50051"
-  GRPC_URL: "user-service"
+  HOST: "user-service"
   RABBITMQ_URL: "amqp://rabbitmq"

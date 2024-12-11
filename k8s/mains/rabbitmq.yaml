@@ -28,25 +28,6 @@ spec:
               value: "guest"
             - name: RABBITMQ_DEFAULT_PASS
               value: "guest"
-          livenessProbe:
-            exec:
-              command:
-                - rabbitmqctl
-                - status
-            initialDelaySeconds: 25
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-          readinessProbe: 
-            exec:
-              command:
-                - rabbitmqctl
-                - status
-            initialDelaySeconds: 25
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
-
 
 ---
 
@@ -59,7 +40,7 @@ metadata:
   labels:
     app: rabbitmq
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: rabbitmq
   ports:
@@ -69,4 +50,3 @@ spec:
     - name: management
       port: 15672
       targetPort: 15672
-      nodePort: 31672

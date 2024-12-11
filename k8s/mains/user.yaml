@@ -40,9 +40,10 @@ apiVersion: v1
 kind: Service
 metadata:
   name: user-service
+  namespace: default
 spec: 
   type: ClusterIP
-  selector: 
+  selector:
     app: user
   ports:
     - protocol: TCP
