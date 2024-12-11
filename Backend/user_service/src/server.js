@@ -18,12 +18,13 @@ const server = new grpc.Server();
 server.addService(userProto.service,{ GetUser, EditUser });
 
 const PORT = process.env.PORT || 50051;
+const HOST = process.env.HOST || '0.0.0.0';
 
 const exchange = 'user-exchange';
 const routingKey = 'user.added';
 consumeMessages(exchange, routingKey);
 
-server.bindAsync(`${process.env.GRPC_URL}:${PORT}`,grpc.ServerCredentials.createInsecure(),
+server.bindAsync(`${HOST}:${PORT}`,grpc.ServerCredentials.createInsecure(),
     (err,port) => {
         if(err) {
             console.error(err)
