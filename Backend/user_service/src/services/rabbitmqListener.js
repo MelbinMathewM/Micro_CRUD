@@ -4,7 +4,7 @@ import User from '../models/userModel.js'
 export const consumeMessages = async (exchange, routingKey) => {
     try {
         const connection = await amqp.connect(process.env.RABBITMQ_URL)
-        const channel = await connection.createChannel();
+        const channel = await connection.createChannel(); //hello
 
         await channel.assertExchange(exchange, 'direct', { durable: true });
 
