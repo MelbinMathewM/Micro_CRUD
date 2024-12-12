@@ -25,7 +25,7 @@ async function refreshAccessToken() {
                 return null;
             } else {
                 const data = await resp.json();
-                return data.newAccessToken;
+                return data.accessToken;
             }
         } catch (err) {
             return null;

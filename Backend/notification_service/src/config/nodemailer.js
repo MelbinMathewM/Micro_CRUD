@@ -19,7 +19,7 @@ const sendEmailNotification = async (recipient, subject, message) => {
       text: message,
     };
 
-    console.log(`Sending email to ${recipient} with subject: ${subject}`);
+    console.log(process.env.EMAIL_PASS,'llll',process.env.EMAIL_USER);
     const info = await transporter.sendMail(mailOptions);
     console.log('Email sent successfully:', info.response);
   } catch (err) {

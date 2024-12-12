@@ -39,8 +39,11 @@ export const addUser = async (req,res) => {
         
         const { name, username, email, password } = req.body;
 
-        const existing = await User.findOne({username});
-        if(existing) return res.status(409).json({ message : 'Email already exists' });
+        const existingUsername = await User.findOne({username});
+        if(existingUsername) return res.status(409).json({ message : 'Username already exists' });
+        
+        const existingEmail = await User.findOne({email});
+        if(existingEmail) return res.status(409).json({ message : 'Email already exists' });
 
         const hashedPassword = await bcrypt.hash(password,10);
 
@@ -72,8 +75,11 @@ export const editUser = async (req,res) => {
 
         const { id, name, username, email } = req.body;
 
-        const existing = await User.findOne({ _id : { $ne : id }, username});
-        if(existing) return res.status(409).json({ message : 'Email already exists' });
+        const existingUserName = await User.findOne({ _id : { $ne : id }, username});
+        const existingEmail = await User.findOne({ _id : { $ne : id }, email});
+
+        if(existingUserName) return res.status(409).json({ message : 'Username already exists' });
+        if(existingEmail) return res.status(409).json({ message : 'Email already exists' });
 
         const updatedUser = await User.findByIdAndUpdate({_id : id},{ $set : {
             name,

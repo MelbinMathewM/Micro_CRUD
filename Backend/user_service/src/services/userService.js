@@ -36,8 +36,9 @@ export const EditUser = async (call,callback) => {
     try{
         const { user_id, user } = call.request;
         const { name, username, email} = user;
-    const existing = await User.findOne({ _id : { $ne : user_id }, username });
-    if(existing) return callback({
+    const existingUserName = await User.findOne({ _id : { $ne : user_id }, username });
+    const existingEmail = await User.findOne({ _id : { $ne : user_id }, email });
+    if(existingUserName || existingEmail) return callback({
         code : grpc.status.ALREADY_EXISTS,
         message : "User already exists"
     })

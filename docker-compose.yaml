@@ -1,4 +1,3 @@
-
 services:
   api-gateway:
     build:
@@ -12,6 +11,12 @@ services:
       - auth-service
     environment:
       - PORT=3000
+      - USER_SERVICE_GRPC_URL=user-service:50051
+      - ADMIN_SERVICE_HTTP_URL=http://admin-service:4043
+      - AUTH_SERVICE_HTTP_URL=http://auth-service:4044
+      - ALLOWED_ORIGINS=http://localhost:5173
+      - ADMIN_ACCESS_SECRET_TOKEN=${ADMIN_ACCESS_SECRET_TOKEN}
+      - USER_ACCESS_SECRET_TOKEN=${USER_ACCESS_SECRET_TOKEN}
     networks:
       - app-network
 
@@ -25,6 +30,13 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
     restart: always
+    # healthcheck:
+    #   test: ["CMD", "rabbitmq-diagnostics", "ping"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 3
+    # volumes:
+    #   - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - app-network
     
@@ -37,6 +49,8 @@ services:
       - rabbitmq
     environment:
       - RABBITMQ_URL=amqp://rabbitmq:5672
+      - MONGO_URI=${MONGO_URI_ADMIN}
+      - ADMIN_ACCESS_SECRET_TOKEN=${ADMIN_ACCESS_SECRET_TOKEN}
     restart: always
     networks:
       - app-network
@@ -49,7 +63,12 @@ services:
     depends_on:
       - rabbitmq
     environment:
-      - RABBITMQ_URL=amqp://rabbitmq:5672
+      - RABBITMQ_URL=amqp://rabitmq:5672
+      - ADMIN_ACCESS_SECRET_TOKEN=${ADMIN_ACCESS_SECRET_TOKEN}
+      - ADMIN_REFRESH_SECRET_TOKEN=${ADMIN_REFRESH_SECRET_TOKEN}
+      - USER_ACCESS_SECRET_TOKEN=${USER_ACCESS_SECRET_TOKEN}
+      - USER_REFRESH_SECRET_TOKEN=${USER_REFRESH_SECRET_TOKEN}
+      - MONGO_URI=${MONGO_URI_AUTH}
     restart: always
     networks:
       - app-network
@@ -63,6 +82,8 @@ services:
       - rabbitmq
     environment:
       - RABBITMQ_URL=amqp://rabbitmq:5672
+      - MONGO_URI=${MONGO_URI_USER}
+      - HOST=user-service
     restart: always
     networks:
       - app-network
@@ -70,6 +91,8 @@ services:
   notification-service:
     image: melbinmathewm/notification-service
     container_name: notification-service
+    ports:
+      - "5000:5000"
     depends_on:
       - rabbitmq
       - admin-service
@@ -77,23 +100,28 @@ services:
       - user-service
     environment:
       - RABBITMQ_URL=amqp://rabbitmq:5672
-      - EMAIL_USER=${EMAIL_USER:-glassicsofficial@gmail.com}
-      - EMAIL_PASS=${EMAIL_PASS:-czqm lofg cuqz warp}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
     restart: always
     networks:
       - app-network
 
-  # frontend-service:
-  #   image: melbinmathewm/frontend
-  #   container_name: frontend
-  #   depends_on:
-  #     - api-gateway
-  #   ports:
-  #     - "5173:5173"
-  #   restart: always
-  #   networks:
-  #     - app-network
+  frontend-service:
+    image: melbinmathewm/frontend
+    container_name: frontend
+    depends_on:
+      - api-gateway
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_BASE_URL=http://localhost:3000
+    restart: always
+    networks:
+      - app-network
 
 networks:
   app-network:
     driver: bridge
+
+volumes:
+  rabbitmq_data:
